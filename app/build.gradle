@@ -39,6 +39,10 @@ android {
     }
 }
 
+configurations{
+    ktlint
+}
+
 dependencies {
 
     implementation "androidx.appcompat:appcompat:$rootProject.supportLibraryVersion"
@@ -50,4 +54,31 @@ dependencies {
     testImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$rootProject.androidXTestExtJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.androidXTestEspressoVersion"
+
+    ktlint "com.pinterest:ktlint:$rootProject.ktlintVersion"
+}
+
+task ktlint(type: JavaExec, group: "verification") {
+    description = "Check Kotlin code style."
+    classpath = configurations.ktlint
+    main = "com.pinterest.ktlint.Main"
+    args "src/**/*.kt", "--reporter=checkstyle,output=${buildDir}/reports/ktlint.xml"
+}
+check.dependsOn ktlint
+
+task ktlintFormat(type: JavaExec, group: "formatting") {
+    description = "Fix Kotlin code style deviations."
+    classpath = configurations.ktlint
+    main = "com.pinterest.ktlint.Main"
+    args "-F", "src/**/*.kt", "--reporter=checkstyle,output=${buildDir}/reports/ktlint.xml"
+}
+
+// Android Studio needs to be restarted after running this task
+task addKtLintStyle(type: JavaExec, group: "formatting") {
+    description = "Adds The KtLint Style To Your IDE"
+    classpath = configurations.ktlint
+    main = "com.pinterest.ktlint.Main"
+    args "--android", "applyToIDEA", "-y"
+    // Point to the root directory because this task needs access to the .idea directory
+    workingDir(getRootDir())
 }
