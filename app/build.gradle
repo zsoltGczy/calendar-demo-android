@@ -1,6 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(rootProject.file("local.properties")))
 android {
     compileSdkVersion rootProject.compileSdkVersion
 
@@ -12,6 +15,8 @@ android {
         versionName rootProject.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "EVENTS_API_KEY", "\"" + localProperties['eventsApiKey'] + "\""
     }
 
     buildTypes {
@@ -49,6 +54,9 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintlayoutVersion"
     implementation "androidx.core:core-ktx:$rootProject.ktxVersion"
     implementation "com.google.android.material:material:$rootProject.materialVersion"
+    implementation "com.squareup.moshi:moshi-adapters:$rootProject.moshiVersion"
+    implementation "com.squareup.retrofit2:converter-moshi:$rootProject.retrofitVersion"
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
 
     testImplementation "junit:junit:$rootProject.junitVersion"
@@ -56,6 +64,8 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.androidXTestEspressoVersion"
 
     ktlint "com.pinterest:ktlint:$rootProject.ktlintVersion"
+
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$rootProject.moshiVersion"
 }
 
 task ktlint(type: JavaExec, group: "verification") {
