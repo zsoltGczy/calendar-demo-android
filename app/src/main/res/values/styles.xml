@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="day">
+        <item name="android:textColor">@color/calendar_date_text</item>
+        <item name="android:textSize">@dimen/day_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="day_legend">
+        <item name="android:textSize">@dimen/day_legend_text_size</item>
+    </style>
+
+    <style name="calendar_title">
+        <item name="android:textColor">@color/calendar_title</item>
+        <item name="android:textSize">@dimen/title_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+<style name="calendar_month">
+    <item name="android:textColor">@color/calendar_month</item>
+    <item name="android:textSize">@dimen/month_text_size</item>
+
+</style>
+</resources>

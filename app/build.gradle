@@ -48,6 +48,7 @@ android {
     }
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -71,6 +72,8 @@ configurations {
 
 dependencies {
 
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$rootProject.desugarVersion"
+
     implementation "androidx.appcompat:appcompat:$rootProject.supportLibraryVersion"
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintlayoutVersion"
     implementation "androidx.core:core-ktx:$rootProject.ktxVersion"
@@ -78,6 +81,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$rootProject.navigationVersion"
     implementation "androidx.room:room-ktx:$rootProject.roomVersion"
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
+    implementation "com.github.kizitonwose:CalendarView:$rootProject.calendarViewVersion"
     implementation "com.google.android.material:material:$rootProject.materialVersion"
     implementation "com.google.dagger:hilt-android:$rootProject.hiltVersion"
     implementation "com.squareup.moshi:moshi-adapters:$rootProject.moshiVersion"
