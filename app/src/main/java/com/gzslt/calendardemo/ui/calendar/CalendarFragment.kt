@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.gzslt.calendardemo.R
+import com.gzslt.calendardemo.common.extension.addRippleEffectOnClick
 import com.gzslt.calendardemo.common.extension.setTextColorRes
 import com.gzslt.calendardemo.databinding.FragmentCalendarBinding
 import com.gzslt.calendardemo.databinding.LayoutCalendarDayBinding
@@ -46,9 +47,21 @@ class CalendarFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setTodayClickListener()
         setLegendLayout()
         setCalendarDays()
         setMonthTitle()
+    }
+
+    private fun setTodayClickListener() {
+        with(binding.todayTextView) {
+            addRippleEffectOnClick()
+            setOnClickListener {
+                binding.calendarView.scrollToDate(LocalDate.now())
+                selectedDate = LocalDate.now()
+                setCalendarDays()
+            }
+        }
     }
 
     private fun setLegendLayout() {
@@ -104,6 +117,9 @@ class CalendarFragment : Fragment() {
                     when (day.date) {
                         selectedDate -> {
                             textView.setBackgroundResource(R.drawable.shape_selected_date_background)
+                            if (day.date == LocalDate.now()) {
+                                textView.setTextColorRes(R.color.today_date)
+                            }
                         }
                         LocalDate.now() -> {
                             textView.setTextColorRes(R.color.today_date)
