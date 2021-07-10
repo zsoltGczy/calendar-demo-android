@@ -2,4 +2,5 @@
     <string name="app_name">Calendar demo</string>
     <string name="calendar_title">Naptár</string>
     <string name="today">Ma</string>
+    <string name="calendar_month_title_different_months">%1$s - %2$s</string>
 </resources>

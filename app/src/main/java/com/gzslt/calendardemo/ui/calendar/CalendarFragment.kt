@@ -20,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -31,6 +32,7 @@ class CalendarFragment : Fragment() {
 
     private var selectedDate: LocalDate? = null
     private val daysOfWeek = DayOfWeek.values()
+    private val currentYearMonth = YearMonth.now()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,6 +48,7 @@ class CalendarFragment : Fragment() {
 
         setLegendLayout()
         setCalendarDays()
+        setMonthTitle()
     }
 
     private fun setLegendLayout() {
@@ -63,11 +66,10 @@ class CalendarFragment : Fragment() {
     }
 
     private fun setCalendarDays() {
-        val currentMonth = YearMonth.now()
-        val startMonth = currentMonth.minusMonths(10)
-        val endMonth = currentMonth.plusMonths(10)
+        val startMonth = currentYearMonth.minusMonths(10)
+        val endMonth = currentYearMonth.plusMonths(10)
         binding.calendarView.setup(startMonth, endMonth, daysOfWeek.first())
-        binding.calendarView.scrollToMonth(currentMonth)
+        binding.calendarView.scrollToMonth(currentYearMonth)
 
         class DayViewContainer(view: View) : ViewContainer(view) {
             lateinit var day: CalendarDay
@@ -115,6 +117,44 @@ class CalendarFragment : Fragment() {
                 } else {
                     textView.setTextColorRes(R.color.calendar_date_text_not_current_month)
                     textView.background = null
+                }
+            }
+        }
+    }
+
+    private fun setMonthTitle() {
+        val monthTitleFormatter = DateTimeFormatter.ofPattern("MMMM")
+            .withLocale(Locale.forLanguageTag("hu-HU"))
+        val monthWithYearTitleFormatter = DateTimeFormatter.ofPattern("yyyy MMMM")
+            .withLocale(Locale.forLanguageTag("hu-HU"))
+
+        binding.calendarView.monthScrollListener = {
+            if (binding.calendarView.maxRowCount == 6) {
+                binding.calendarMonthTextView.text =
+                    if (currentYearMonth.year != it.year)
+                        monthWithYearTitleFormatter.format(it.yearMonth)
+                    else
+                        monthTitleFormatter.format(it.yearMonth)
+            } else {
+                val firstDate = it.weekDays.first().first().date
+                val lastDate = it.weekDays.last().last().date
+
+                if (firstDate.yearMonth == lastDate.yearMonth) {
+                    binding.calendarMonthTextView.text = monthTitleFormatter.format(firstDate)
+                } else {
+                    binding.calendarMonthTextView.text =
+                        if (firstDate.year != lastDate.year)
+                            getString(
+                                R.string.calendar_month_title_different_months,
+                                monthWithYearTitleFormatter.format(firstDate),
+                                monthWithYearTitleFormatter.format(lastDate)
+                            )
+                        else
+                            getString(
+                                R.string.calendar_month_title_different_months,
+                                monthTitleFormatter.format(firstDate),
+                                monthTitleFormatter.format(lastDate)
+                            )
                 }
             }
         }
