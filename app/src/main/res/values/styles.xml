@@ -21,8 +21,13 @@
         <item name="android:textColor">@color/calendar_month</item>
         <item name="android:textSize">@dimen/month_text_size</item>
     </style>
-    
+
     <style name="bottom_sheet">
         <item name="android:background">@drawable/shape_bottom_sheet</item>
+    </style>
+
+    <style name="error_message">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/thunderbird</item>
     </style>
 </resources>

@@ -24,5 +24,7 @@ class DatabaseModule {
             BuildConfig.DATABASE_NAME
         ).build()
 
+    @Provides
+    @Singleton
     fun provideEventDao(database: AppDatabase) = database.eventDao()
 }

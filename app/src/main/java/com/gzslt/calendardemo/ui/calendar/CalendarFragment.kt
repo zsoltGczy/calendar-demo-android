@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.gzslt.calendardemo.R
 import com.gzslt.calendardemo.common.extension.addRippleEffectOnClick
+import com.gzslt.calendardemo.common.extension.exhaustive
 import com.gzslt.calendardemo.common.extension.setTextColorRes
 import com.gzslt.calendardemo.databinding.FragmentCalendarBinding
 import com.gzslt.calendardemo.databinding.LayoutCalendarDayBinding
@@ -23,7 +25,6 @@ import com.kizitonwose.calendarview.utils.yearMonth
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -32,14 +33,23 @@ import java.util.Locale
 @AndroidEntryPoint
 class CalendarFragment : Fragment() {
 
+    private object Flipper {
+        const val LOADING = 0
+        const val CONTENT = 1
+        const val ERROR = 2
+    }
+
     private var _binding: FragmentCalendarBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: CalendarViewModel by viewModels()
 
     private var selectedDate: LocalDate? = null
     private val daysOfWeek = DayOfWeek.values()
     private val currentYearMonth = YearMonth.now()
 
     private lateinit var eventListAdapter: EventListAdapter
+    private lateinit var eventList: List<EventPresentationModel>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,6 +68,11 @@ class CalendarFragment : Fragment() {
         setCalendarDays()
         setMonthTitle()
         setBottomSheet()
+
+        with(viewModel) {
+            viewState.observe(viewLifecycleOwner, ::render)
+            loadEventList()
+        }
     }
 
     private fun setTodayClickListener() {
@@ -127,8 +142,11 @@ class CalendarFragment : Fragment() {
                             if (day.date == LocalDate.now()) {
                                 textView.setTextColorRes(R.color.today_date)
                             }
+
                             binding.bottomSheet.bottomSheetMonthTextView.text =
                                 DateTimeFormatter.ofPattern("MMM dd").format(day.date)
+
+                            setEventAdapterItemsByDate(day.date)
                         }
                         LocalDate.now() -> {
                             textView.setTextColorRes(R.color.today_date)
@@ -203,5 +221,39 @@ class CalendarFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun render(viewState: EventListViewState) {
+        when (viewState) {
+            Loading -> {
+                with(binding) {
+                    calendarViewFlipper.displayedChild = Flipper.LOADING
+                    bottomSheet.bottomSheetViewFlipper.displayedChild = Flipper.LOADING
+                }
+            }
+            is Error -> {
+                with(binding) {
+                    calendarViewFlipper.displayedChild = Flipper.ERROR
+                    bottomSheet.bottomSheetViewFlipper.displayedChild = Flipper.ERROR
+                    errorTextView.text = getString(R.string.event_list_error, viewState.message)
+                }
+            }
+            is EventListLoaded -> {
+                with(binding) {
+                    calendarViewFlipper.displayedChild = Flipper.CONTENT
+                    bottomSheet.bottomSheetViewFlipper.displayedChild = Flipper.CONTENT
+                    eventList = viewState.eventList
+                    setEventAdapterItemsByDate(LocalDate.now())
+                }
+            }
+        }.exhaustive
+    }
+
+    private fun setEventAdapterItemsByDate(dateTime: LocalDate) {
+        eventListAdapter.items = eventList.filter { model ->
+            model.startDate.year == dateTime.year &&
+                model.startDate.month == dateTime.month &&
+                model.startDate.dayOfMonth == dateTime.dayOfMonth
+        }
     }
 }
