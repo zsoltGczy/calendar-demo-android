@@ -22,4 +22,11 @@
         android:layout_gravity="center"
         android:textStyle="bold"/>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/eventRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_padding_size_small"
+        android:layout_marginEnd="@dimen/margin_padding_size_small" />
+
 </LinearLayout>
