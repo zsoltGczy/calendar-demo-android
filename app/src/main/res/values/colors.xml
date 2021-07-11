@@ -6,6 +6,7 @@
     <color name="white_alpha_19">#30FFFFFF</color>
     <color name="white_alpha_38">#60FFFFFF</color>
     <color name="bright_sun">#FBCC42</color>
+    <color name="alto">#D1D1D1</color>
 
     <color name="calendar_background">@color/biscay</color>
     <color name="calendar_date_text">@color/white</color>
@@ -15,4 +16,6 @@
     <color name="legend_day">@color/white_alpha_38</color>
     <color name="selected_date_background">@color/blue_zodiac</color>
     <color name="today_date">@color/bright_sun</color>
+    <color name="bottom_sheet_background">@color/white</color>
+    <color name="base_line_color">@color/alto</color>
 </resources>

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.gzslt.calendardemo.R
 import com.gzslt.calendardemo.common.extension.addRippleEffectOnClick
 import com.gzslt.calendardemo.common.extension.setTextColorRes
@@ -51,6 +52,7 @@ class CalendarFragment : Fragment() {
         setLegendLayout()
         setCalendarDays()
         setMonthTitle()
+        setBottomSheet()
     }
 
     private fun setTodayClickListener() {
@@ -120,6 +122,8 @@ class CalendarFragment : Fragment() {
                             if (day.date == LocalDate.now()) {
                                 textView.setTextColorRes(R.color.today_date)
                             }
+                            binding.bottomSheet.bottomSheetMonthTextView.text =
+                                DateTimeFormatter.ofPattern("MMM dd").format(day.date)
                         }
                         LocalDate.now() -> {
                             textView.setTextColorRes(R.color.today_date)
@@ -174,6 +178,16 @@ class CalendarFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun setBottomSheet() {
+        val behavior = BottomSheetBehavior.from(binding.bottomSheet.bottomSheetLayout)
+        behavior.isHideable = false
+        // TODO
+        behavior.peekHeight = 240
+        binding.bottomSheet.bottomSheetMonthTextView.text =
+            DateTimeFormatter.ofPattern("MMM dd").format(LocalDate.now())
+
     }
 
     override fun onDestroyView() {
